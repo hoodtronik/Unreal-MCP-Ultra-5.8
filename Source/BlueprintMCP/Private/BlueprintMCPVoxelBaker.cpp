@@ -133,7 +133,11 @@ namespace VoxelBake
 			}
 		}
 
-		StaticMesh->ImportVersion = EImportStaticMeshVersion::LastVersion;
+		// CLAUDE-NOTE: UE 5.7 deprecated direct UStaticMesh::ImportVersion access in favour of
+		// SetImportVersion(), which is a plain inline setter onto the same member — no behaviour
+		// change. Unlike the GetUsageByFlag work in this pass, this accessor does NOT exist on
+		// 5.6, so the 5.6 branch deliberately keeps the direct assignment. Engine-version-specific.
+		StaticMesh->SetImportVersion(EImportStaticMeshVersion::LastVersion);
 		StaticMesh->Build(false);
 		StaticMesh->PostEditChange();
 

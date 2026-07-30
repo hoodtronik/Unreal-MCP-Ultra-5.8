@@ -402,42 +402,49 @@ FString FBlueprintMCPServer::HandleSetMaterialProperty(const FString& Body)
 			Material->PostEditChange();
 		}
 	}
+	// CLAUDE-NOTE: these three read via GetUsageByFlag() and write via SetUsageByFlag() instead of
+	// touching the bUsedWith* members, which UE 5.8 deprecated and Epic will make private. Both
+	// accessors predate 5.6, so this form is correct on both engines. The swap is behaviour-
+	// preserving by construction: engine-side SetUsageByFlag() is a switch that assigns the very
+	// same member, and its contract ("doesn't validate the usage flag... doesn't trigger
+	// recompilation") matches what the direct assignment did. Deliberately NOT SetMaterialUsage(),
+	// which additionally validates and can kick off a recompile — that would be a behaviour change.
 	else if (Property == TEXT("bUsedWithSkeletalMesh"))
 	{
 		bool bValue = Json->GetBoolField(TEXT("value"));
-		OldValue = Material->bUsedWithSkeletalMesh ? TEXT("true") : TEXT("false");
+		OldValue = Material->GetUsageByFlag(MATUSAGE_SkeletalMesh) ? TEXT("true") : TEXT("false");
 		NewValue = bValue ? TEXT("true") : TEXT("false");
 
 		if (!bDryRun)
 		{
 			Material->PreEditChange(nullptr);
-			Material->bUsedWithSkeletalMesh = bValue ? 1 : 0;
+			Material->SetUsageByFlag(MATUSAGE_SkeletalMesh, bValue);
 			Material->PostEditChange();
 		}
 	}
 	else if (Property == TEXT("bUsedWithMorphTargets"))
 	{
 		bool bValue = Json->GetBoolField(TEXT("value"));
-		OldValue = Material->bUsedWithMorphTargets ? TEXT("true") : TEXT("false");
+		OldValue = Material->GetUsageByFlag(MATUSAGE_MorphTargets) ? TEXT("true") : TEXT("false");
 		NewValue = bValue ? TEXT("true") : TEXT("false");
 
 		if (!bDryRun)
 		{
 			Material->PreEditChange(nullptr);
-			Material->bUsedWithMorphTargets = bValue ? 1 : 0;
+			Material->SetUsageByFlag(MATUSAGE_MorphTargets, bValue);
 			Material->PostEditChange();
 		}
 	}
 	else if (Property == TEXT("bUsedWithNiagaraSprites"))
 	{
 		bool bValue = Json->GetBoolField(TEXT("value"));
-		OldValue = Material->bUsedWithNiagaraSprites ? TEXT("true") : TEXT("false");
+		OldValue = Material->GetUsageByFlag(MATUSAGE_NiagaraSprites) ? TEXT("true") : TEXT("false");
 		NewValue = bValue ? TEXT("true") : TEXT("false");
 
 		if (!bDryRun)
 		{
 			Material->PreEditChange(nullptr);
-			Material->bUsedWithNiagaraSprites = bValue ? 1 : 0;
+			Material->SetUsageByFlag(MATUSAGE_NiagaraSprites, bValue);
 			Material->PostEditChange();
 		}
 	}
