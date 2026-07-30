@@ -16,7 +16,7 @@ without first alerting the user and receiving explicit permission.** If you enco
 ## Project shape
 
 - `Tools/` — TypeScript MCP server (stdio). Build: `cd Tools && npm run build`. Tests:
-  `npm test` (Vitest; spawns a real headless UE editor, so UE 5.6 must be installed).
+  `npm test` (Vitest; spawns a real headless UE editor, so UE 5.8 must be installed).
 - `Source/BlueprintMCP/` — the compiled C++ UE5 **editor** plugin that does the actual work.
   TypeScript calls it over HTTP on `localhost:9847`.
 
@@ -25,9 +25,22 @@ sides: a handler in `Source/`, and a `server.tool(...)` definition in `Tools/src
 
 ## Engine version
 
-Targets **UE 5.6.1** — the only version built and tested against. Other 5.x may compile; expect to
-fix API drift yourself. The `.uplugin` deliberately declares no `EngineVersion` field, so the editor
-will not refuse to load on a different engine — the constraint is documentation, not enforcement.
+**This repo is the UE 5.8 branch of BlueprintMCP.** It targets **UE 5.8.1** and is the only version
+it is built against. For UE 5.6.1 use the original repo:
+[hoodtronik/Unreal-MCP-Ultra](https://github.com/hoodtronik/Unreal-MCP-Ultra).
+
+The two repos are otherwise near-identical. The 5.8 port is a small set of API-drift fixes, each
+marked with a `CLAUDE-NOTE:` that names the 5.6 form — do not "fix" them back:
+
+| What changed in 5.8 | Fix applied |
+|---|---|
+| `Engine/UserDefinedStruct.h` forwarding header removed | include `StructUtils/UserDefinedStruct.h` (also valid on 5.6) |
+| `UMaterial::GetMaterialResource()` reverted to `EShaderPlatform` (5.6 briefly used `ERHIFeatureLevel::Type`) | pass `GMaxRHIShaderPlatform` — genuinely version-specific |
+| `FJsonObject::Values` re-keyed `FString` → `UE::FSharedString` | rebuild the key via `FString(*Pair.Key)` (compiles on both) |
+| Mass split into `Runtime/Mass/{MassCore,MassEngine,…}`; base element types moved to `MassCore` | RiotCrowd's `Build.cs` adds `MassCore` (does not exist on 5.6) |
+
+The `.uplugin` deliberately declares no `EngineVersion` field, so the editor will not refuse to load
+on a different engine — the constraint is documentation, not enforcement.
 
 ## Adding a tool — both sides required
 

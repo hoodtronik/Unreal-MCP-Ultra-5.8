@@ -1,6 +1,10 @@
-# UE5 MCP — Give AI agents full access to your UE5 assets
+# UE5 MCP (UE 5.8) — Give AI agents full access to your UE5 assets
 
 Vibe code your Blueprints, materials, and Anim Blueprints. This plugin lets Claude Code (or any MCP client) read, modify, and create Unreal Engine 5 Blueprints — just describe what you want in plain English.
+
+> **Engine version:** this repo targets **UE 5.8.1**.
+> For **UE 5.6.1**, use the original repo: **[hoodtronik/Unreal-MCP-Ultra](https://github.com/hoodtronik/Unreal-MCP-Ultra)**.
+> The two are near-identical — see [Engine version](#engine-version) for the exact differences.
 
 > "Add a health component to my player character" · "Find everywhere I use GetActorLocation and replace it" · "What does my damage system do?"
 
@@ -11,19 +15,34 @@ https://github.com/user-attachments/assets/11b86d62-982b-42b3-bddb-aeeddc3e675c
 Tell Claude Code:
 
 ```
-Set up https://github.com/hoodtronik/Unreal-MCP-Ultra in my project
+Set up https://github.com/hoodtronik/Unreal-MCP-Ultra-5.8 in my project
 ```
+
+## Engine version
+
+Targets **UE 5.8.1**, and that is the version it is built against. The C++ compiles and links
+cleanly on 5.8.1 (both the core plugin and the optional Riot Crowd plugin).
+
+Porting from the 5.6 repo required four fixes, each marked in-code with a `CLAUDE-NOTE:` naming the
+5.6 form:
+
+| What changed in 5.8 | Fix |
+|---|---|
+| `Engine/UserDefinedStruct.h` forwarding header removed | include `StructUtils/UserDefinedStruct.h` (also valid on 5.6) |
+| `UMaterial::GetMaterialResource()` reverted to `EShaderPlatform` (5.6 briefly took `ERHIFeatureLevel::Type`) | pass `GMaxRHIShaderPlatform` |
+| `FJsonObject::Values` re-keyed `FString` → `UE::FSharedString` | rebuild the key via `FString(*Pair.Key)` |
+| Mass split into `Runtime/Mass/{MassCore,MassEngine,…}`; base element types moved to `MassCore` | Riot Crowd's `Build.cs` adds `MassCore` |
+
+The `.uplugin` declares no `EngineVersion` field, so the editor will not refuse to load it on
+another engine — but the 5.6 and 5.8 sources are not interchangeable, so use the matching repo.
 
 ## Prebuilt binaries (no C++ toolchain needed)
 
-Using a **Blueprint-only** project, or don't want to compile? A precompiled, drop-in
-build is available here:
+Using a **Blueprint-only** project, or don't want to compile?
 
-**➡️ [hoodtronik/BlueprintMCP-prebuilt](https://github.com/hoodtronik/BlueprintMCP-prebuilt)** — UE 5.6, Win64
-
-Copy that plugin into your project's `Plugins/` folder and the editor loads it directly,
-no build step required. (Prebuilt binaries are engine-version-specific — for other engine
-versions, build from source in this repo.)
+> ⚠️ The prebuilt distro **[hoodtronik/BlueprintMCP-prebuilt](https://github.com/hoodtronik/BlueprintMCP-prebuilt)**
+> is **UE 5.6, Win64 only** — its binaries will not load in 5.8. Prebuilt binaries are
+> engine-version-specific. There is no 5.8 prebuilt distro yet; build from source in this repo.
 
 ## How It Works
 
