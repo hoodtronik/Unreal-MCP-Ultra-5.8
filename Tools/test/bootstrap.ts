@@ -99,8 +99,13 @@ export function generateTempProject(): string {
  * so on a machine with 5.6 through 5.8 installed every test run silently launched 5.8 against a
  * 5.6 DLL and could never pass. Prefer the target version; only fall back to newest if it's absent,
  * and say so loudly when that happens.
+ *
+ * CLAUDE-NOTE: this is the UE 5.8 repo, so the target is "5.8". On a machine that also has the 5.6
+ * repo checked out, getting this wrong reproduces the exact failure described above with the
+ * versions swapped — a 5.6 editor launched against a 5.8 DLL (BuildId 55116800). Keep this value
+ * in lockstep with the engine the plugin is actually built against.
  */
-const TARGET_ENGINE_VERSION = "5.6";
+const TARGET_ENGINE_VERSION = "5.8";
 
 const ENGINE_BASES = [
   "C:\\Program Files\\Epic Games",
