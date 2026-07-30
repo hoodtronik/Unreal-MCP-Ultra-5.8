@@ -6,7 +6,10 @@
 #include "Engine/DataTable.h"
 #include "Engine/CurveTable.h"
 #include "Engine/DataAsset.h"
-#include "Engine/UserDefinedStruct.h"
+// CLAUDE-NOTE: UE 5.8 removed the Engine/UserDefinedStruct.h forwarding header. The real header
+// has lived at StructUtils/UserDefinedStruct.h since 5.6, so this path is correct on both 5.6
+// and 5.8 and needs no version guard. Engine/UserDefinedEnum.h did NOT move.
+#include "StructUtils/UserDefinedStruct.h"
 #include "Factories/DataTableFactory.h"
 #include "Factories/CurveTableFactory.h"
 #include "Factories/DataAssetFactory.h"

@@ -242,7 +242,12 @@ bool FBlueprintMCPServer::LoadSnapshotFromDisk(const FString& SnapshotId, FGraph
 				}
 			}
 
-			OutSnapshot.Graphs.Add(GraphPair.Key, GraphData);
+			// CLAUDE-NOTE: UE 5.8 re-keyed FJsonObject::Values from FString to UE::FSharedString
+			// (see UE_JSONOBJECT_LEGACY_STRING_KEYS in Dom/JsonObject.h). FSharedString does not
+			// implicitly convert to FString, so the key needs an explicit rebuild here. Going via
+			// operator* rather than .ToView() is deliberate — both FString and FSharedString
+			// define operator*, so this one line compiles unchanged on 5.6 and 5.8.
+			OutSnapshot.Graphs.Add(FString(*GraphPair.Key), GraphData);
 		}
 	}
 

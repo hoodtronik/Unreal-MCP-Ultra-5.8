@@ -53,6 +53,15 @@ public class BlueprintMCPRiotCrowd : ModuleRules
 			// Naming the module here is correct and sufficient; enabling the shell plugin is not.
 			"MassEntity",
 
+			// CLAUDE-NOTE: UE 5.8 restructured Mass. 5.6 had a single Runtime/MassEntity; 5.8 has
+			// Runtime/Mass/{MassCore,MassEngine,MassSignals,MassDeveloper}, and the base element
+			// types moved into the new MassCore module — FMassElement and FMassFragment (from
+			// Mass/EntityElementTypes.h) and FTransformFragment (Mass/EntityFragments.h, which was
+			// MassCommon's in 5.6). The headers still resolve transitively, so this manifests at
+			// LINK time, not compile time: three unresolved Z_Construct_UScriptStruct_* externals.
+			// MassCore does not exist on 5.6 — this line must be dropped when porting back.
+			"MassCore",
+
 			// From the MassGameplay plugin, which IS listed in the .uplugin.
 			"MassCommon",
 			"MassMovement",

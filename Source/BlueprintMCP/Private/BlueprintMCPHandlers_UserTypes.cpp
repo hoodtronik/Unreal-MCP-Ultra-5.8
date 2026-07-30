@@ -1,5 +1,8 @@
 #include "BlueprintMCPServer.h"
-#include "Engine/UserDefinedStruct.h"
+// CLAUDE-NOTE: UE 5.8 removed the Engine/UserDefinedStruct.h forwarding header. The real header
+// has lived at StructUtils/UserDefinedStruct.h since 5.6, so this path is correct on both 5.6
+// and 5.8 and needs no version guard. Engine/UserDefinedEnum.h below did NOT move.
+#include "StructUtils/UserDefinedStruct.h"
 #include "Engine/UserDefinedEnum.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "UserDefinedStructure/UserDefinedStructEditorData.h"
