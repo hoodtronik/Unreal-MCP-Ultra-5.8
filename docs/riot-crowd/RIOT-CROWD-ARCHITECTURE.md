@@ -66,8 +66,15 @@ BlueprintMCPRiotCrowd (Editor)
 
 The `MassEntity` **plugin** is deliberately *not* enabled: it is a content-only shell and UBT warns
 that it "was deprecated in 5.5 and will soon be removed". Naming the module is correct and
-sufficient. Confirmed live — `riot_get_capabilities` reports `massEntity: false` while
-`massGameplay: true`, and the simulation runs.
+sufficient. Confirmed live — the simulation runs with that plugin off.
+
+`riot_get_capabilities` used to *report* that as `massEntity: false`. That was a bug, not a finding.
+It probed for the **plugin**, so on 5.8 — where the shell plugin is gone entirely — it answered
+`false` while Mass was linked, loaded and serving all 16 endpoints. It now probes the **module**
+(`MassEntity`, plus `MassCore` for the 5.8 split) and reports `massEntity: true`, with per-module
+detail under a new `availableModules` key. Engine modules are no longer listed under
+`availablePlugins`: nothing there is enableable, and naming one sent readers to the plugin browser
+to fix something that was never broken.
 
 ## Request flow
 
