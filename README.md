@@ -1,3 +1,5 @@
+> **ARCHIVED 2026-09-22.** UE 5.8 support now lives in the main repo, **[hoodtronik/Unreal-MCP-Ultra](https://github.com/hoodtronik/Unreal-MCP-Ultra)** — one source tree that builds and is verified on both UE 5.6.1 and UE 5.8.3 (see `docs/DUAL_ENGINE_UE56_UE58_PORT_STATUS.md` there). This repo is kept read-only as the record of the original 5.8 port and its API-difference notes.
+
 # UE5 MCP (UE 5.8) — Give AI agents full access to your UE5 assets
 
 Vibe code your Blueprints, materials, and Anim Blueprints. This plugin lets Claude Code (or any MCP client) read, modify, and create Unreal Engine 5 Blueprints — just describe what you want in plain English.
